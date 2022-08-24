@@ -3,11 +3,11 @@ import { GraphQLServer } from "graphql-yoga";
 //Type definions (schema)
 const typeDefs = `
     type Query {
-        greeting(name: String, position: String): String!
-        me: User!
-        post: Post!
-        line: String!
-        add(a: Float, b: Float): Float!
+      greating(name: String) : String!
+      add(a: Number! , b: Number!) : Float!
+       me: User!
+       post: Post!
+       add: Float!
     }
 
     type User {
@@ -18,46 +18,39 @@ const typeDefs = `
     }
 
     type Post {
-        id: ID!
-        title: String!
-        body: String!
-        published: Boolean!
+      id: ID!
+      title: String!
+      body: String,!
+      published: Boolean!
     }
+
 `;
 
 // Resolvers
 const resolvers = {
   Query: {
-    greeting(parent, args, ctx, info) {
-      if (args.name) {
-        return `Hellow ${args.name} `;
-      } else {
-        return `Hello!`;
-      }
-    },
     me() {
       return {
-        id: "123456",
-        name: "Ahmed",
-        email: "ahmed@gmail.com",
-        age: 28,
+        id: "12345",
+        name: "Mike",
+        email: "mike@example.com",
       };
     },
     post() {
       return {
-        id: "4561",
-        title: "ASDcsd",
-        body: "Body",
+        id: "12345",
+        title: "frist Post",
+        body: "this my frost post ever",
         published: true,
       };
     },
-    line() {
-      return "from Line";
+    greating(parent, args, ctx) {
+      if (args.name) {
+        return `Hi Mr(s): ${args.name}`;
+      } else {
+        return "Hello!";
+      }
     },
- 
-    add(parent,args){
-        return `${args.a + args.b}`
-    }
   },
 };
 
