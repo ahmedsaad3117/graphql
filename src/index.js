@@ -2,18 +2,20 @@ import { GraphQLServer } from "graphql-yoga";
 import { v4 as uuidv4 } from "uuid";
 
 //Demo Data
-const users = [
+let users = [
   {
     id: "1",
     name: "Ahmed",
     email: "ahmed@gmail.com",
     age: 15,
   },
+
   {
     id: "2",
     name: "khald",
     email: "khald@gmail.com",
   },
+  
   {
     id: "3",
     name: "saad",
@@ -22,7 +24,7 @@ const users = [
   },
 ];
 
-const posts = [
+let posts = [
   {
     id: "10",
     title: "Post1",
@@ -48,12 +50,12 @@ const posts = [
   },
 ];
 
-const comments = [
+let comments = [
   {
     id: "1",
     text: "comment one",
     author: "1",
-    post: "10",
+    post: "12",
   },
 
   {
@@ -88,9 +90,29 @@ const typeDefs = `
     }
 
     type Mutation {
-      createUser(name: String!, email: String!, age: Int): User!
-      createPost(title: String!, body: String!, published: Boolean!, author: ID!): Post!
-      createComment(text: String!, author: ID!, post: ID!) : Comment!
+      createUser(data: CreateUserInput!): User!
+      deleteUser(id: ID!) : User!
+      createPost(data: CreatePostInput!): Post!
+      createComment(data: CreateCommentInput!) : Comment!
+    }
+
+    input CreateUserInput {
+      name: String!
+      email: String!
+      age: Int
+    }
+
+    input CreatePostInput {
+      title: String!
+      body: String!
+      published: Boolean!
+      author: ID!
+    }
+
+    input CreateCommentInput {
+      text: String!
+      author: ID!
+      post: ID!
     }
 
     type User {
@@ -165,7 +187,7 @@ const resolvers = {
 
   Mutation: {
     createUser(parent, args, ctx, info) {
-      const isEmailTaken = users.some((user) => user.email === args.email);
+      const isEmailTaken = users.some((user) => user.email === args.data.email);
 
       if (isEmailTaken) {
         throw new Error("Email taken.");
@@ -173,7 +195,7 @@ const resolvers = {
 
       const user = {
         id: uuidv4(),
-        ...args
+        ...args.data,
       };
 
       users.push(user);
@@ -181,8 +203,32 @@ const resolvers = {
       return user;
     },
 
+    deleteUser(parent, args, ctx, info) {
+      const userIndex = users.findIndex((user) => {
+        return user.id === args.id;
+      });
+
+      if (userIndex === -1) {
+        throw new Error("Thier is no match");
+      }
+
+      const deletedUser = users.splice(userIndex, 1);
+
+      posts = posts.filter((post) => {
+        const match = post.author === args.id;
+
+        if (match) {
+          comments = comments.filter((comment) => comment.post !== post.id);
+        }
+
+        return !match;
+      });
+
+      return deletedUser[0];
+    },
+
     createPost(parent, args, ctx, info) {
-      const isUserExists = users.some((user) => user.id === args.author);
+      const isUserExists = users.some((user) => user.id === args.data.author);
 
       if (!isUserExists) {
         throw new Error("User not found");
@@ -190,7 +236,7 @@ const resolvers = {
 
       const post = {
         id: uuidv4(),
-        ...args
+        ...args.data,
       };
 
       posts.push(post);
@@ -199,21 +245,23 @@ const resolvers = {
     },
 
     createComment(parent, args, ctx, info) {
-      const isPostExistsAndPublished = posts.some((post) => post.id === args.post && post.published);
-      const isUserExists = users.some((user) => user.id === args.author);
+      const isPostExistsAndPublished = posts.some(
+        (post) => post.id === args.data.post && post.published
+      );
+      const isUserExists = users.some((user) => user.id === args.data.author);
 
       if (!isPostExistsAndPublished && !isUserExists) {
-        throw new Error('User or post not exist!')
+        throw new Error("User or post not exist!");
       }
 
       const comment = {
         id: uuidv4(),
-        ...args
-      }
+        ...args.data,
+      };
 
-      comments.push(comment)
+      comments.push(comment);
 
-      return comment
+      return comment;
     },
   },
 

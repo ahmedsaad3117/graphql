@@ -1,0 +1,64 @@
+Description:
+
+1) Return transaction listing for the logged in seller (use seller id as a param to avoid the need to implementing auth module).
+
+  - URL: `{{url}}/transactions?page=1&per_page=10&seller_id=id?date_range=`
+  - Type: `GET`
+  - Headers: `Token: ABC`
+  - Request Params: `page, per_page, seller_id=id,date_range
+  - Response Schema:
+
+ 
+  {
+      data: {
+          transactions: [
+              {
+              id,
+              title,
+              image,
+              price,
+              last_updated,
+              }
+          ],
+          paging: {
+          total: 20,
+          current_page: 1,
+          per_page: 10
+          }
+      }
+  }
+ 
+
+2) To enable a system admin to view the sales summary for sellers' incomes, present the data and display it in a graph on the front-end side.
+Something like in the link below: https://www.thoughtco.com/thmb/lFBN_hPYJVshdMzB2zuBSDpGJOA=/1031x602/filters:no_upscale():max_bytes(150000):strip_icc()/Edgcott_Population_Time_Series_Graph-5a78812b642dca0037c46c59.jpg
+
+  - URL: `{{url}}/sellers/transactions-summary?seller_id=id?date_range=`
+  - Type: `GET`
+  - Headers: `Token: ABC`
+  - Request Params: seller_id=id,date_range
+  - Response Schema:
+
+ 
+  {
+      data: {
+          days: [
+              {
+              date,
+              total_income,
+              seller_name,
+              seller_id
+              }
+          ]
+      }
+  }
+ 
+
+- Entities: `Seller, Transactions`
+- Use TypeScript, Mysql, Sequelize and Express to implement this endpoint.
+- Use small git commits (Not just one Large initial commit).
+- Put this on a private git Repo with steps to run in a `README` file and send an invitation to Omar and Nader's emails in this email.
+- Initialize a simple angular app to execute this endpoint (you can add a field to write seller id)
+- Bonus: Write unit tests for the backend and front end
+
+Thanks,
+Omar Barakat
