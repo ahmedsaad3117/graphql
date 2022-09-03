@@ -15,7 +15,7 @@ let users = [
     name: "khald",
     email: "khald@gmail.com",
   },
-  
+
   {
     id: "3",
     name: "saad",
@@ -93,6 +93,7 @@ const typeDefs = `
       createUser(data: CreateUserInput!): User!
       deleteUser(id: ID!) : User!
       createPost(data: CreatePostInput!): Post!
+      deletePost(id: ID!) : Post!
       createComment(data: CreateCommentInput!) : Comment!
     }
 
@@ -242,6 +243,24 @@ const resolvers = {
       posts.push(post);
 
       return post;
+    },
+
+    deletePost(parent, args, ctx, info) {
+      const postIndex = posts.findIndex((post) => {
+        return post.id === args.id;
+      });
+
+      if (postIndex === -1) {
+        throw new Error("Post not found!");
+      }
+
+      let deletedPost = posts.splice(postIndex, 1);
+
+      comments = comments.filter((comment) => {
+        return comment.post !== deletedPost[0].id;
+      });
+
+      return deletedPost[0];
     },
 
     createComment(parent, args, ctx, info) {
