@@ -62,13 +62,15 @@ const Mutation = {
       user.email = data.email;
     }
 
-    if(typeof data.name === "string"){
-      user.name === data.name
+    if (typeof data.name === "string") {
+      user.name === data.name;
     }
 
-    if(typeof data.age !== "undefined"){
-      user.age == data.age
+    if (typeof data.age !== "undefined") {
+      user.age == data.age;
     }
+
+    return user;
   },
 
   createPost(parent, args, { db }, info) {
@@ -106,6 +108,29 @@ const Mutation = {
     return deletedPost[0];
   },
 
+  updatePost(parent, args, { db }, info) {
+    const { id, data } = args;
+    const post = db.posts.find((post) => post.id === id);
+
+    if (!post) {
+      throw new Error("This post id not exist!");
+    }
+
+    if (typeof data.title === "string") {
+      post.title = data.title;
+    }
+
+    if (typeof data.body === "string") {
+      post.body = data.body;
+    }
+
+    if (typeof data.published === "boolean") {
+      post.published = data.published;
+    }
+
+    return post;
+  },
+
   createComment(parent, args, { db }, info) {
     const isPostExistsAndPublished = db.posts.some(
       (post) => post.id === args.data.post && post.published
@@ -138,6 +163,21 @@ const Mutation = {
     const deletedComment = db.comments.splice(commentIndex, 1);
 
     return deletedComment[0];
+  },
+
+  updateComment(parent, args, { db }, info) {
+    const { id, data } = args;
+    const comment = db.comments.find((comment) => comment.id === id);
+
+    if (!comment) {
+      throw new Error("This Comment id not exist!");
+    }
+
+    if (typeof data.text === "string") {
+      comment.text = data.text;
+    }
+
+    return comment;
   },
 };
 
