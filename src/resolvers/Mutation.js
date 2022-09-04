@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
 
-
 const Mutation = {
   createUser(parent, args, { db }, info) {
     const isEmailTaken = db.users.some(
@@ -43,6 +42,33 @@ const Mutation = {
     });
 
     return deletedUser[0];
+  },
+
+  updateUser(parent, args, { db }, info) {
+    const { id, data } = args;
+    const user = db.users.find((user) => user.id === id);
+
+    if (!user) {
+      throw new Error("User not found!");
+    }
+
+    if (typeof data.email === "string") {
+      isEmailTaken = db.users.some((user) => user.email === data.email);
+
+      if (isEmailTaken) {
+        throw new Error("This Email is already exaist!");
+      }
+
+      user.email = data.email;
+    }
+
+    if(typeof data.name === "string"){
+      user.name === data.name
+    }
+
+    if(typeof data.age !== "undefined"){
+      user.age == data.age
+    }
   },
 
   createPost(parent, args, { db }, info) {
@@ -115,5 +141,4 @@ const Mutation = {
   },
 };
 
-
-export default Mutation 
+export default Mutation;
