@@ -1,0 +1,37 @@
+// // Input: arr = [1,2,3,4], k = 2
+// // Output: 6
+// // Explanation: The missing positive integers are [5,6,7,...]. The 2nd missing positive integer is 6.
+ 
+
+// // Constraints:
+
+// // 1 <= arr.length <= 1000
+// // 1 <= arr[i] <= 1000
+// // 1 <= k <= 1000
+// // arr[i] < arr[j] for 1 <= i < j <= arr.length
+ 
+var _ = require('underscore');
+
+var evens = _.reject([1, 2, 3, 4, 5, 6], (num) => num % 2 != 0);
+
+console.log("Evens");
+console.log(evens);
+
+// // Input: arr = [2,3,4,7,11], k = 5
+//       1,2,3,4,5,6,7,8,9
+//       ^       ^ ^   ^ ^
+// // Output: 9
+const kMissing = (arr,k) => {
+  let newArr = []
+  let index = 0
+  let regNum = 0
+
+  while(newArr.length === k){
+    regNum++
+    if(newArr[index] !== regNum){
+      newArr.push(regNum)
+    }
+    index++
+  }
+  return newArr
+}
