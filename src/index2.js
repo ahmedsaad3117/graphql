@@ -2,24 +2,24 @@ import { GraphQLServer } from "graphql-yoga";
 
 const typeDefs = `
   type Query {
-    hi: String!
+    user: Person! 
+  }
+
+  type Person {
+    id: ID!
     name: String!
-    age: Float!
+    age: Int
   }
 `;
 
 const resolvers = {
   Query: {
-    hi() {
-      return "Hello GraphQL!";
-    },
-
-    name() {
-      return "Adam";
-    },
-
-    age() {
-      return 5;
+    user() {
+      return {
+        id: "12345",
+        name: "John",
+        age: 22,
+      };
     },
   },
 };
